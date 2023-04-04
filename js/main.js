@@ -8,17 +8,17 @@ do {
     return _monto / (_plazo * 12);
   }
 
-  function InteresMensual (_monto, _interes){
+  function interesM (_monto, _interes){
     return (_monto * (_interes / 100)) / 12;
   }
 
-  function TotalPrimerCuota (_monto, _plazo, _interes){
+  function totalPrimerC (_monto, _plazo, _interes){
     const cuotaCapital = Cuota(_monto,_plazo)
-    const interesMensual = InteresMensual(_monto, _interes)
+    const interesMensual = interesM(_monto, _interes)
     return Math.ceil(cuotaCapital + interesMensual)
   }
 
-  const totalPrimerCuota = TotalPrimerCuota(monto, plazo, interes);
+  const totalPrimerCuota = totalPrimerC(monto, plazo, interes);
 
   if(!Number.isNaN(monto) && !Number.isNaN(plazo) && !Number.isNaN(interes) ){
     alert(`Este es el monto que abonaras por mes = $${totalPrimerCuota}`)
