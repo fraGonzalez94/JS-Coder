@@ -1,3 +1,53 @@
+
+
+  // Definimos una clase Cliente que tiene 2 atributos: nombre, apellido
+
+  class Cliente {
+    constructor(nombre, apellido) {
+      this.nombre = nombre;
+      this.apellido = apellido;
+      
+  }
+  }
+
+//Vamos a crear un array vacío que almacene los datos de los
+//clientes ingresados por medio de un push.
+
+const arrayClientes= [];
+
+//Vamos a vincular el formulario:
+const form = document.getElementById("formulario");
+
+//Vamos a trabajar con el formulario, tomar sus datos, crear un objeto y luego almacenamos esos datos en el array vacío
+
+form.addEventListener("submit", (e)=>{
+  //evitamos el comportamiento por default del form
+  e.preventDefault();
+
+  const name = document.getElementById("nombre");
+  const lastname = document.getElementById("apellido");
+  const error = document.getElementById("error");
+
+  if (name.value === "" || lastname.value === "") {
+    error.style.display = "block";
+  } else {
+    //crear un objeto que sea el cliente:
+    const cliente = new Cliente(name.value, lastname.value);
+    arrayClientes.push(cliente);
+    console.log(arrayClientes);
+
+    //Reseteamo el form al mandar los datos
+    formulario.reset();
+
+    // Guardamos los datos en el localstorage
+    localStorage.setItem("clientes", JSON.stringify(arrayClientes));
+
+    // Permitir la reserva del servicio y ocultar el mensaje de error
+    error.style.display = "none";
+  }
+});
+
+
 // Definir los servicios de la peluquería como objetos
 const corte = {
   nombre: 'Corte de cabello',
@@ -29,45 +79,33 @@ const servicios = [corte, tinte, barba, ninos];
 // Variable para almacenar los servicios seleccionados
 let serviciosSeleccionados = [];
 
-// Iniciar ciclo para seleccionar servicios
-let continuar = true;
-while (continuar) {
+ // Guardamos los datos en el localstorage
+const contenedorServicios = document.getElementById("contenedorServicios");
+let serviciosGuardados = JSON.parse(localStorage.getItem("serviciosSeleccionados")) || [];
 
-  // Pedir al usuario que seleccione un servicio
-  let seleccion = prompt('Bienvenido a la peluquería. ¿Qué servicio te gustaría?\n1: Corte de cabello\n2: Color y decoloracion\n3: Arreglo de barba\n4: Corte niños');
+// Aplico DOM con el metodo forEach para recorrer el array y generar los div con los servicios
+servicios.forEach(servicio => {
+  const div= document.createElement ("div");
+  div.innerHTML=`<p> Nombre del servicio: ${servicio.nombre}<p>
+                <p> Precio del servicio: ${servicio.precio}<p>
+                <p> Duracion del servicio: ${servicio.duracion}<p>
+                <button onclick="agregarServicio(${servicio.precio}, '${servicio.nombre}')">Reservar Servicio</button>`;
+  contenedorServicios.appendChild(div);
+} )
+  
 
-  // Convertir la selección del usuario en un número entero
-  seleccion = parseInt(seleccion);
+function agregarServicio(precio, nombre) {
+  const servicio = { nombre: nombre, precio: precio };
 
-  // Validar la selección del usuario y agregar el servicio al array de servicios seleccionados
-  if (seleccion >= 1 && seleccion <= servicios.length) {
-    const servicioSeleccionado = servicios[seleccion - 1];
-    alert(`Has seleccionado el servicio de ${servicioSeleccionado.nombre}.\nEl precio del servicio es de ${servicioSeleccionado.precio} pesos y dura ${servicioSeleccionado.duracion} minutos.`);
-    serviciosSeleccionados.push(servicioSeleccionado);
-  } else {
-    alert('Selección inválida. Por favor, selecciona un número entre 1 y 4.');
+  // Verificar si hay un cliente registrado antes de reservar un servicio
+  if (arrayClientes.length === 0) {
+    const mensaje = document.getElementById("mensaje");
+    mensaje.textContent = "Debe ingresar su nombre y apellido antes de reservar un servicio.";
+    return;
   }
 
-  // Preguntar si el usuario desea agregar otro servicio
-  continuar = confirm("¿Deseas agregar otro servicio?");
-  
+  serviciosGuardados.push(servicio);
+  localStorage.setItem("serviciosSeleccionados", JSON.stringify(serviciosGuardados));
+  alert(`El servicio de ${nombre} ha sido reservado y tiene un precio de ${precio} pesos.\n Muchas gracias por su reserva`);
 }
 
-// Ordenar los servicios seleccionados por precio descendente
-serviciosSeleccionados.sort((a, b) => b.precio - a.precio);
-
-// Mostrar los servicios seleccionados y su precio ordenados por precio descendente
-let detalleServicios = "";
-for (let servicio of serviciosSeleccionados) {
-  detalleServicios += `- ${servicio.nombre}: ${servicio.precio} pesos\n`;
-}
-alert(`Has seleccionado los siguientes servicios ordenados por precio descendente:\n${detalleServicios}`);
-
-// Calcular el precio total de los servicios seleccionados
-let precioTotal = 0;
-for (let servicio of serviciosSeleccionados) {
-  precioTotal += servicio.precio;
-}
-
-// Mostrar el precio total al usuario
-alert(`El precio total de los servicios seleccionados es de ${precioTotal} pesos.`);

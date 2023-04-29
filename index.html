@@ -4,11 +4,36 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/estilos.css">
     <title>Prueba</title>
     
 </head>
 <body>
-    <h1>Seleccionar Servicio</h1>
-    <script src="./js/main.js"></script>
+    <h1 id="tituloPrincipal">Reservar Servicio</h1>
+    
+    <hr>
+    <h2>Ingrese los siguientes datos para continuar</h2>
+    <form id="formulario">
+        <label for="nombre">Ingrese su Nombre: </label>
+        <input type="text" id="nombre">
+        <br><br>
+        <label for="apellido"> Ingrese su apellido: </label>
+        <input type="text" id="apellido">
+        <br><br>
+
+
+        <button>Enviar</button>
+        <div id="error" style="display: none; color: red;">Por favor ingresa tu nombre y apellido.</div>
+
+    </form>
+    <hr>
+    <h2> Seleccione el servicio a reservar</h2>
+    <div id="mensaje"></div>
+    <div id="contenedorServicios"></div>
+    
+
+
+
+<script src="./js/main.js" ></script>  
 </body>
 </html>
