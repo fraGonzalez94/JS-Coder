@@ -1,6 +1,6 @@
  // Definimos una clase Cliente que tiene 2 atributos: nombre, apellido
 
- class Cliente {
+class Cliente {
   constructor(nombre, apellido) {
     this.nombre = nombre;
     this.apellido = apellido;
@@ -62,7 +62,7 @@ duracion: 60,
 const barba = {
 nombre: 'Arreglo de barba',
 precio: 500,
-duracion: 15,
+duracion: 15 ,
 };
 
 const ninos = {
@@ -81,12 +81,15 @@ let serviciosSeleccionados = [];
 const contenedorServicios = document.getElementById("contenedorServicios");
 let serviciosGuardados = JSON.parse(localStorage.getItem("serviciosSeleccionados")) || [];
 
+
+
 // Aplico DOM con el metodo forEach para recorrer el array y generar los div con los servicios
 servicios.forEach(servicio => {
 const div= document.createElement ("div");
+div.classList.add("servicio");
 div.innerHTML=`<p> Nombre del servicio: ${servicio.nombre}<p>
-              <p> Precio del servicio: ${servicio.precio}<p>
-              <p> Duracion del servicio: ${servicio.duracion}<p>
+              <p> Precio del servicio: ${servicio.precio} $<p>
+              <p> Duracion del servicio: ${servicio.duracion} min<p>
               <button onclick="agregarServicio(${servicio.precio}, '${servicio.nombre}')">Reservar Servicio</button>`;
 contenedorServicios.appendChild(div);
 } )
@@ -139,7 +142,7 @@ function agregarServicio(precio, nombre) {
 
       // Mostrar un mensaje de confirmación
       Swal.fire(
-        `El servicio de ${servicio.nombre} ha sido reservado`,
+        `El servicio de ${servicio.nombre} ha sido reservado, con un precio de $`,
         'Para confirmar día y horario, enviar sus datos al siguiente WhatsApp: 11 6998-6557',
         'success'
       );
@@ -149,3 +152,25 @@ function agregarServicio(precio, nombre) {
       console.log(error);
     });
 }
+  // Función para descargar un objeto JSON como archivo
+  function descargarJSON(data, filename) {
+    const jsonData = JSON.stringify(data);
+    const blob = new Blob([jsonData], { type: "application/json" });
+    saveAs(blob, filename);
+}
+
+// Obtener la condición del clima en Buenos Aires
+fetch('https://api.weatherapi.com/v1/current.json?key=8b053cb37d7e4b018d7212557231305&q=Buenos%20Aires')
+.then(response => response.json())
+.then(data => {
+    const temperature = data.current.temp_c;
+    const condition = data.current.condition.text;
+    const symbol = data.current.condition.icon;
+
+    const climaElement = document.getElementById("clima");
+    climaElement.innerHTML = `Clima: ${condition}  <img src="${symbol}" alt="Weather Symbol"> , Temperatura: ${temperature}°C`;
+})
+    
+    .catch(error => {
+        console.log(error);
+    });

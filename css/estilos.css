@@ -1,3 +1,68 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+form {
+    margin-bottom: 20px;
+}
+
+label {
+    font-weight: bold;
+}
+
+input[type="text"] {
+    padding: 5px;
+    width: 200px;
+    margin-bottom: 10px;
+}
+#error {
+    color: red;
+    font-weight: bold;
+    display: none;
+}
+
+button[type="submit"] {
+    padding: 5px 10px;
+    background-color: #00da07;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+h2 {
+    margin-bottom: 10px;
+}
+
+#clima {
+    font-weight: bold;
+}
+
+
 #mensaje{
     color:red;
 }
+
+.servicio {
+    background-color: #e6d7d7;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .servicio p {
+    margin: 0;
+    margin-bottom: 5px;
+  }
+  
+  .servicio button {
+    padding: 5px 10px;
+    background-color: #70b973;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .servicio button:hover {
+    background-color: #45a049;
+  }
