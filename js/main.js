@@ -1,99 +1,72 @@
- // Definimos una clase Cliente que tiene 2 atributos: nombre, apellido
+// Definimos una clase Cliente que tiene 2 atributos: nombre, apellido
 
 class Cliente {
   constructor(nombre, apellido) {
-    this.nombre = nombre;
-    this.apellido = apellido;
-    
-}
+    this.nombre = nombre.toLowerCase();
+    this.apellido = apellido.toLowerCase();
+  }
 }
 
-//Vamos a crear un array vacío que almacene los datos de los
-//clientes ingresados por medio de un push.
-
-const arrayClientes= [];
 
 //Vamos a vincular el formulario:
 const form = document.getElementById("formulario");
+const serviciosContainer = document.getElementsByClassName("servicios")[0];
+
 
 //Vamos a trabajar con el formulario, tomar sus datos, crear un objeto y luego almacenamos esos datos en el array vacío
 
-form.addEventListener("submit", (e)=>{
+form.addEventListener("submit", (e) => {
 //evitamos el comportamiento por default del form
-e.preventDefault();
+  e.preventDefault();
+  //Vamos a crear un array vacío que almacene los datos de los
+  //clientes ingresados por medio de un push.
+  const arrayClientes = [];
+  const name = document.getElementById("nombre");
+  const lastname = document.getElementById("apellido");
+  const error = document.getElementById("error");
 
-const name = document.getElementById("nombre");
-const lastname = document.getElementById("apellido");
-const error = document.getElementById("error");
+  if (name.value === "" || lastname.value === "") {
+    error.style.display = "block";
+    serviciosContainer.classList.add("visually-hidden");
+  } else {
+    //crear un objeto que sea el cliente:
+    const cliente = new Cliente(name.value, lastname.value);
+    arrayClientes.push(cliente);
 
-if (name.value === "" || lastname.value === "") {
-  error.style.display = "block";
-} else {
-  //crear un objeto que sea el cliente:
-  const cliente = new Cliente(name.value, lastname.value);
-  arrayClientes.push(cliente);
-  console.log(arrayClientes);
+    // Guardamos los datos en el localstorage
+    localStorage.setItem("clientes", JSON.stringify(arrayClientes));
 
-  //Reseteamo el form al mandar los datos
-  formulario.reset();
+    // Permitir la reserva del servicio y ocultar el mensaje de error
+    error.style.display = "none";
 
-  // Guardamos los datos en el localstorage
-  localStorage.setItem("clientes", JSON.stringify(arrayClientes));
-
-  // Permitir la reserva del servicio y ocultar el mensaje de error
-  error.style.display = "none";
-}
+    serviciosContainer.classList.remove("visually-hidden");
+    showReservas();
+  }
 });
 
 
-// Definir los servicios de la peluquería como objetos
-const corte = {
-nombre: 'Corte de cabello',
-precio: 1000,
-duracion: 30,
-};
-
-const tinte = {
-nombre: 'Color y decoloracion',
-precio: 1500,
-duracion: 60,
-};
-
-const barba = {
-nombre: 'Arreglo de barba',
-precio: 500,
-duracion: 15 ,
-};
-
-const ninos = {
-nombre: 'Corte niños',
-precio: 800,
-duracion: 45,
-};
-
-// Crear un array para almacenar los servicios disponibles
-const servicios = [corte, tinte, barba, ninos];
-
-// Variable para almacenar los servicios seleccionados
-let serviciosSeleccionados = [];
-
-// Guardamos los datos en el localstorage
-const contenedorServicios = document.getElementById("contenedorServicios");
-let serviciosGuardados = JSON.parse(localStorage.getItem("serviciosSeleccionados")) || [];
-
+// Obtener los servicios de la peluquería de servicios.json
+async function getServices() {
+  return await fetch('js/servicios.json').then(response => response.json())
+}
 
 
 // Aplico DOM con el metodo forEach para recorrer el array y generar los div con los servicios
-servicios.forEach(servicio => {
-const div= document.createElement ("div");
-div.classList.add("servicio");
-div.innerHTML=`<p> Nombre del servicio: ${servicio.nombre}<p>
+const contenedorServicios = document.getElementById("contenedorServicios");
+getServices().then((_servicios) => {
+  _servicios.forEach(servicio => {
+    const div = document.createElement("div");
+    div.classList.add("servicio");
+    div.innerHTML = `<p> Nombre del servicio: ${servicio.nombre}<p>
               <p> Precio del servicio: ${servicio.precio} $<p>
               <p> Duracion del servicio: ${servicio.duracion} min<p>
-              <button onclick="agregarServicio(${servicio.precio}, '${servicio.nombre}')">Reservar Servicio</button>`;
-contenedorServicios.appendChild(div);
-} )
+              <button onclick="agregarServicio(${servicio.precio}, '${servicio.nombre}', ${servicio.duracion})">Reservar Servicio</button>`;
+    contenedorServicios.appendChild(div);
+  })
+})
 
+// Guardamos los datos en el localstorage
+let serviciosGuardados = JSON.parse(localStorage.getItem("serviciosSeleccionados")) || [];
 
 function reservarServicio(servicio) {
   return new Promise((resolve, reject) => {
@@ -119,11 +92,11 @@ function reservarServicio(servicio) {
   });
 }
 
-function agregarServicio(precio, nombre) {
-  const servicio = { nombre: nombre, precio: precio };
-
+function agregarServicio(precio, nombre, duracion) {
+  const cliente = JSON.parse(localStorage.getItem('clientes')) || [];
+  const servicio = {nombre: nombre, precio: precio, duracion: duracion, cliente: cliente[0], id: new Date().valueOf()};
   // Verificar si hay un cliente registrado antes de reservar un servicio
-  if (arrayClientes.length === 0) {
+  if (cliente.length === 0) {
     const mensaje = document.getElementById('mensaje');
     mensaje.textContent =
       'Debe ingresar su nombre y apellido antes de reservar un servicio.';
@@ -142,35 +115,67 @@ function agregarServicio(precio, nombre) {
 
       // Mostrar un mensaje de confirmación
       Swal.fire(
-        `El servicio de ${servicio.nombre} ha sido reservado, con un precio de $`,
+        `El servicio de ${servicio.nombre} ha sido reservado, con un precio de $${servicio.precio}`,
         'Para confirmar día y horario, enviar sus datos al siguiente WhatsApp: 11 6998-6557',
         'success'
       );
+
+      showReservas();
     })
     .catch((error) => {
       // Si la promesa es rechazada, mostrar un mensaje de error en la consola
       console.log(error);
     });
 }
-  // Función para descargar un objeto JSON como archivo
-  function descargarJSON(data, filename) {
-    const jsonData = JSON.stringify(data);
-    const blob = new Blob([jsonData], { type: "application/json" });
-    saveAs(blob, filename);
+
+// Muestro las reservas y en el caso que ya tuviera reservas las traigo del localstorage filtrando por cliente
+function showReservas() {
+  const containerReservas = document.getElementById('contendorReservas');
+  containerReservas.innerHTML = '';
+  const reservas = JSON.parse(localStorage.getItem("serviciosSeleccionados")) || [];
+  const cliente = JSON.parse(localStorage.getItem("clientes"))[0] || [];
+  const reservasFiltered = reservas.filter((reserva) => reserva.cliente.nombre == cliente.nombre);
+  reservasFiltered.forEach((servicio) => {
+    const div = document.createElement("div");
+    div.classList.add("reserva");
+    div.innerHTML = `<p> Nombre del cliente: ${cliente.nombre} ${cliente.apellido}<p>
+              <p> Nombre del servicio: ${servicio.nombre}
+              <p> Precio del servicio: ${servicio.precio} $<p>
+              <p> Duracion del servicio: ${servicio.duracion} min<p>
+              <button onclick="eliminarReserva(${servicio.id})">Eliminar Servicio</button>`;
+    containerReservas.appendChild(div);
+  })
 }
+
+//busco y elimino la reserva del servicio
+function eliminarReserva(id) {
+  let reservas = JSON.parse(localStorage.getItem("serviciosSeleccionados")) || [];
+
+  reservas = reservas.filter((reserva) => {
+    return parseInt(reserva.id) !== parseInt(id);
+  });
+  serviciosGuardados = reservas;
+  localStorage.setItem(
+    'serviciosSeleccionados',
+    JSON.stringify(reservas)
+  );
+  showReservas();
+}
+
 
 // Obtener la condición del clima en Buenos Aires
 fetch('https://api.weatherapi.com/v1/current.json?key=8b053cb37d7e4b018d7212557231305&q=Buenos%20Aires')
-.then(response => response.json())
-.then(data => {
+  .then(response => response.json())
+  .then(data => {
     const temperature = data.current.temp_c;
     const condition = data.current.condition.text;
     const symbol = data.current.condition.icon;
+    const place = data.location.name;
 
     const climaElement = document.getElementById("clima");
-    climaElement.innerHTML = `Clima: ${condition}  <img src="${symbol}" alt="Weather Symbol"> , Temperatura: ${temperature}°C`;
-})
-    
-    .catch(error => {
-        console.log(error);
-    });
+    climaElement.innerHTML = `Clima: ${condition}  <img src="${symbol}" alt="Weather Symbol"> , Temperatura: ${temperature}°C, ${place}`;
+  })
+
+  .catch(error => {
+    console.log(error);
+  });

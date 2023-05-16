@@ -16,6 +16,7 @@ input[type="text"] {
     width: 200px;
     margin-bottom: 10px;
 }
+
 #error {
     color: red;
     font-weight: bold;
@@ -39,8 +40,8 @@ h2 {
 }
 
 
-#mensaje{
-    color:red;
+#mensaje {
+    color: red;
 }
 
 .servicio {
@@ -48,21 +49,46 @@ h2 {
     border-radius: 5px;
     padding: 10px;
     margin-bottom: 10px;
-  }
-  
-  .servicio p {
+}
+
+.servicio p {
     margin: 0;
     margin-bottom: 5px;
-  }
-  
-  .servicio button {
+}
+
+.servicio button {
     padding: 5px 10px;
     background-color: #70b973;
     color: white;
     border: none;
     cursor: pointer;
-  }
-  
-  .servicio button:hover {
+}
+
+.servicio button:hover {
     background-color: #45a049;
-  }
+}
+
+
+.reserva {
+    background-color: #d9e3e5;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.reserva p {
+    margin: 0;
+    margin-bottom: 5px;
+}
+
+.reserva button {
+    padding: 5px 10px;
+    background-color: #ff5e5e;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.reserva button:hover {
+    background-color: #ac3f3f;
+}

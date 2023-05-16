@@ -1,0 +1,22 @@
+[
+  {
+    "nombre": "Corte de cabello",
+    "precio": 1000,
+    "duracion": 30
+  },
+  {
+    "nombre": "Color y decoloracion",
+    "precio": 1500,
+    "duracion": 60
+  },
+  {
+    "nombre": "Arreglo de barba",
+    "precio": 500,
+    "duracion": 15
+  },
+  {
+    "nombre": "Corte niños",
+    "precio": 800,
+    "duracion": 45
+  }
+]
